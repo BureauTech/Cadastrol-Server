@@ -11,8 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonView;
-
 import javax.persistence.GenerationType;
 
 @Getter
@@ -25,18 +23,15 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "use_cod")
-    @JsonView(value = {View.UserView.Basic.class})
-    Long useCod;
+    private Long useCod;
     
     @Column(name = "use_name")
-    @JsonView(value = {View.UserView.Basic.class})
     private String useName;
     
     @Column(name = "use_email")
     private String useEmail;
     
     @Column(name = "use_phone")
-    @JsonView(value = {View.UserView.Basic.class})
     private String usePhone;
 
     @Column(name = "use_password")

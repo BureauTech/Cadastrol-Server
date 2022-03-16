@@ -8,6 +8,7 @@ import br.com.fatec.server.entities.UserEntity;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
     public UserEntity findByUseCod(Long useCod);
+    public <T>T findByUseCod(Long useCod, Class<T> projection);
 
     public List<UserEntity> findAll();
 }

@@ -1,7 +1,5 @@
 package br.com.fatec.server.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.fatec.server.dtos.UserDto;
 import br.com.fatec.server.entities.UserEntity;
 import br.com.fatec.server.mappers.UserMapper;
+import br.com.fatec.server.projections.UserProjection;
 import br.com.fatec.server.repositories.UserRepository;
 import br.com.fatec.server.responses.SuccessResponse;
 
@@ -46,8 +45,8 @@ public class UserController {
     }
 
     @GetMapping("/{useCod}")
-    public ResponseEntity<SuccessResponse> get(@PathVariable Long useCod) throws JsonProcessingException {
-        UserEntity user = userRepository.findByUseCod(useCod);
+    public ResponseEntity<SuccessResponse> get(@PathVariable Long useCod) {
+        UserProjection.WithouPassword user = userRepository.findByUseCod(useCod, UserProjection.WithouPassword.class);
         SuccessResponse response = new SuccessResponse(user);
         return new ResponseEntity<SuccessResponse>(response, HttpStatus.OK);
     }
