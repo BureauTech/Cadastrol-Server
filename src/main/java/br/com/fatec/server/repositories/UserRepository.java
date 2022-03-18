@@ -12,9 +12,12 @@ import br.com.fatec.server.projections.UserProjection;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
     public UserEntity findByUseCod(Long useCod);
-    public <T>T findByUseCod(Long useCod, Class<T> projection);
+
+    public <T> T findByUseCod(Long useCod, Class<T> projection);
 
     public Optional<UserEntity> findByUseEmail(String email);
+
     public List<UserEntity> findAll();
-    public Page<UserProjection.WithouPassword> findAllProjectedBy(Pageable pageable);
+
+    public Page<UserProjection.WithoutPassword> findAllProjectedBy(Pageable pageable);
 }

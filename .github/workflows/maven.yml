@@ -10,12 +10,17 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    container: openjdk:11
 
     services:
       db:
         image: postgres
         ports:
           - 5432:5432
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
 
     steps:
     - uses: actions/checkout@v2
@@ -23,8 +28,14 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '11'
-        distribution: 'temurin'
+        distribution: 'adopt'
         cache: maven
+    - name: Update
+      run: apt-get update
+    - name: Install postgresql
+      run: apt-get install --yes --no-install-recommends postgresql-client
+    - name: Create database
+      run: psql -h postgres -U postgres -c 'CREATE DATABASE bureauto;'
     - name: Grant permission
       run: chmod +x mvnw
     - name: Build with Maven

@@ -19,19 +19,18 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 public class JWTUtil {
     
-    private static final String KEY = "spring.jwt.sec";
-    private static final Long EXPIRATION = 1000L * 60L * 60L; // A hour
-    //private static final Long EXPIRATION = 1000L * 100L; // Ten seconds
+    private static final String KEY = System.getenv("JWT_KEY");
+    private static final Long EXPIRATION_IN_MS = 1000L * 60L * 60L * 3L; // Three hours
 
     public static String generateToken(UserDetailsData user) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         UserEntity userWithoutPassword = new UserEntity();
         userWithoutPassword.setUseEmail(user.getUsername());
         String jsonUser = mapper.writeValueAsString(userWithoutPassword);
-       // Date now = new Date();
+
         return Jwts.builder().claim("userDetails", jsonUser).setIssuer("br.gov.sp.fatec")
                 .setSubject(user.getUsername())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION)).signWith(SignatureAlgorithm.HS512, KEY).compact();
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_IN_MS)).signWith(SignatureAlgorithm.HS512, KEY).compact();
     }
 
     public static Authentication parseToken(String token) throws JsonParseException, JsonMappingException, IOException {
@@ -39,7 +38,7 @@ public class JWTUtil {
         String credentialsJson = Jwts.parser().setSigningKey(KEY).parseClaimsJws(token).getBody().get("userDetails",
                 String.class);
         UserEntity user = mapper.readValue(credentialsJson, UserEntity.class);
-        //UserDetails userDetails = User.builder().username(user.getUseEmail()).password("secret").build();
+
         return new UsernamePasswordAuthenticationToken(user.getUseEmail(), user.getUsePassword(), new ArrayList<>());
     }
 }

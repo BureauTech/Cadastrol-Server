@@ -44,17 +44,17 @@ public class UserController {
         SuccessResponse response = new SuccessResponse(newUser);
         return new ResponseEntity<SuccessResponse>(response, HttpStatus.OK);
     }
-    
+
     @GetMapping()
     public ResponseEntity<SuccessResponse> getAll(@RequestParam(value = "page", defaultValue = "0") Integer page) {
-        Page<UserProjection.WithouPassword> user = userRepository.findAllProjectedBy(PageRequest.of(page, 25));
+        Page<UserProjection.WithoutPassword> user = userRepository.findAllProjectedBy(PageRequest.of(page, 25));
         SuccessResponse response = new SuccessResponse(user.getContent());
         return new ResponseEntity<SuccessResponse>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{useCod}")
     public ResponseEntity<SuccessResponse> get(@PathVariable Long useCod) {
-        UserProjection.WithouPassword user = userRepository.findByUseCod(useCod, UserProjection.WithouPassword.class);
+        UserProjection.WithoutPassword user = userRepository.findByUseCod(useCod, UserProjection.WithoutPassword.class);
         SuccessResponse response = new SuccessResponse(user);
         return new ResponseEntity<SuccessResponse>(response, HttpStatus.OK);
     }
@@ -63,16 +63,17 @@ public class UserController {
     public ResponseEntity<SuccessResponse> update(@PathVariable Long useCod, @RequestBody UserDto newUser) {
         UserEntity user = userRepository.findByUseCod(useCod);
         mapper.updateUserFromDto(newUser, user);
-        // remove password
+
         ProjectionFactory pFactory = new SpelAwareProxyProjectionFactory();
-        UserProjection.WithouPassword userWithouPassword = pFactory.createProjection(UserProjection.WithouPassword.class, user);
-        SuccessResponse response = new SuccessResponse(userWithouPassword);
+        UserProjection.WithoutPassword userWithoutPassword = pFactory
+                .createProjection(UserProjection.WithoutPassword.class, user);
+        SuccessResponse response = new SuccessResponse(userWithoutPassword);
         return new ResponseEntity<SuccessResponse>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/{useCod}")
     public ResponseEntity<SuccessResponse> delete(@PathVariable Long useCod) {
-        UserProjection.WithouPassword user = userRepository.findByUseCod(useCod, UserProjection.WithouPassword.class);
+        UserProjection.WithoutPassword user = userRepository.findByUseCod(useCod, UserProjection.WithoutPassword.class);
         userRepository.deleteById(useCod);
         SuccessResponse response = new SuccessResponse(user);
         return new ResponseEntity<SuccessResponse>(response, HttpStatus.OK);
