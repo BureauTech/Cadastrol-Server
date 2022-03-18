@@ -13,15 +13,20 @@ jobs:
     container: openjdk:11
 
     services:
-      db:
-        image: postgres
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_PORT: 5432
+          POSTGRES_USER: postgres
         ports:
           - 5432:5432
-        env:
-          POSTGRES_PASSWORD: postgres
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
-
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 11
@@ -30,12 +35,7 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
         cache: maven
-    - name: Update
-      run: apt-get update
-    - name: Install postgresql
-      run: apt-get install --yes --no-install-recommends postgresql-client
-    - name: Create database
-      run: psql -h postgres -U postgres -c 'CREATE DATABASE bureauto;'
+
     - name: Grant permission
       run: chmod +x mvnw
     - name: Build with Maven
