@@ -9,18 +9,33 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
 import br.com.fatec.server.entities.UserEntity;
 import br.com.fatec.server.services.UserDetailsData;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+@Component
 public class JWTUtil {
-    
-    private static final String KEY = System.getenv("JWT_KEY");
+    @Autowired
+    Environment env;
+
+    @Value("${jwt.secretkey}")
+    private String key;
+    private static String KEY;
     private static final Long EXPIRATION_IN_MS = 1000L * 60L * 60L * 3L; // Three hours
+    public static final String COOKIE_NAME = "JWToken";
+    
+    @Value("${jwt.secretkey}")
+    public void setKey(String key) {
+        JWTUtil.KEY = key;
+    }
 
     public static String generateToken(UserDetailsData user) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();

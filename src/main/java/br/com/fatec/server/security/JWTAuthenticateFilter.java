@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -45,6 +46,8 @@ public class JWTAuthenticateFilter extends UsernamePasswordAuthenticationFilter 
             Authentication authResult) throws IOException, ServletException {
         UserDetailsData userData = (UserDetailsData) authResult.getPrincipal();
         String token = JWTUtil.generateToken(userData);
+        Cookie cookie = new Cookie(JWTUtil.COOKIE_NAME, token);
+        response.addCookie(cookie);
         response.getWriter().write(token);
         response.getWriter().flush();
     }
