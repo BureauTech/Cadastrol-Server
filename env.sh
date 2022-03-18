@@ -14,5 +14,6 @@ if test -f "$ENV_PATH/application-$ENV_TYPE.properties"; then
     cat $ENV_PATH/application-$ENV_TYPE.properties >> $ENV_PATH/$ENV_FILE
     echo 'env' $ENV_TYPE': successfully configured!'
 else
-    echo 'env' $ENV_TYPE': error configuring environment!'
+    echo 'env' $ENV_TYPE': error configuring environment! check if you chose a valid env.'
+    echo 'available envs: dev, prod.'
 fi
