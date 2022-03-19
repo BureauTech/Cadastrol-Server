@@ -36,7 +36,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Set env
-        run: . ./env.sh prod
+        run: bash ./env.sh prod
       - name: Grant permission
         run: chmod +x mvnw
       - name: Build with Maven
