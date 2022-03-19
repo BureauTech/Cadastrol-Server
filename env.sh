@@ -1,8 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
+ENV_TYPE=${1:-"dev"}
 ENV_PATH="./src/main/resources/"
 ENV_FILE="application.properties"
-ENV_TYPE=${1:-"dev"}
+PG_HOST=$([[ "$ENV_TYPE" == "prod" ]] && echo "postgres" || echo "localhost")
 
 if [ $# -eq 0 ]
 then
@@ -15,15 +16,8 @@ then
     echo -n > $ENV_PATH/application.properties
     cat $ENV_PATH/application-base.properties > $ENV_PATH/$ENV_FILE
     cat $ENV_PATH/application-$ENV_TYPE.properties >> $ENV_PATH/$ENV_FILE
-
     echo "configuring database"
-    if [ "$ENV_TYPE" == "dev" ]
-    then
-        PGPASSWORD=postgres psql postgres -h localhost -d postgres -f $ENV_PATH/ddl-database.sql
-    elif [ "$ENV_TYPE" == "prod" ]
-    then
-        PGPASSWORD=postgres psql postgres -h postgres -d postgres -f $ENV_PATH/ddl-database.sql
-    fi
+    PGPASSWORD=postgres psql postgres -h $PG_HOST -d postgres -f $ENV_PATH/ddl-database.sql
     echo "env" $ENV_TYPE": successfully configured!"
 else
     echo "env" $ENV_TYPE": error configuring environment! check if you chose a valid env."
