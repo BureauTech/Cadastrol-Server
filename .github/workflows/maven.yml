@@ -29,15 +29,24 @@ jobs:
           --health-retries 5
     steps:
       - uses: actions/checkout@v2
+
       - name: Set up JDK 11
         uses: actions/setup-java@v2
         with:
           java-version: '11'
           distribution: 'adopt'
           cache: maven
+          
+      - name: Install postgresql-client
+        run: |
+          apt-get update
+          apt-get install --yes --no-install-recommends postgresql-client
+
       - name: Set env
-        run: bash ./env.sh prod
+        run: bash env.sh prod
+
       - name: Grant permission
         run: chmod +x mvnw
+
       - name: Build with Maven
         run: ./mvnw -B package --file pom.xml
