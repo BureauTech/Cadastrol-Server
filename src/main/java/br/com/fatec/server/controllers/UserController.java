@@ -66,7 +66,7 @@ public class UserController {
 
         ProjectionFactory pFactory = new SpelAwareProxyProjectionFactory();
         UserProjection.WithoutPassword userWithoutPassword = pFactory
-                .createProjection(UserProjection.WithoutPassword.class, user);
+            .createProjection(UserProjection.WithoutPassword.class, user);
         SuccessResponse response = new SuccessResponse(userWithoutPassword);
         return new ResponseEntity<SuccessResponse>(response, HttpStatus.OK);
     }

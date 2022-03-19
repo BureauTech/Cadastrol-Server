@@ -35,13 +35,13 @@ public class JWTConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/login*").permitAll()
-                .antMatchers(HttpMethod.POST, "/user*").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .addFilter(new JWTAuthenticateFilter(authenticationManager()))
-                .addFilter(new JWTValidateFilter(authenticationManager()))
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+            .antMatchers(HttpMethod.POST, "/login*").permitAll()
+            .antMatchers(HttpMethod.POST, "/user*").permitAll()
+            .anyRequest().authenticated()
+            .and()
+            .addFilter(new JWTAuthenticateFilter(authenticationManager()))
+            .addFilter(new JWTValidateFilter(authenticationManager()))
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
     @Bean
