@@ -17,10 +17,10 @@ then
     cat $ENV_PATH/application-$ENV_TYPE.properties >> $ENV_PATH/$ENV_FILE
 
     echo "configuring database"
-    if [ "$ENV_TYPE" == "dev" ] 
+    if [ "$ENV_TYPE" == "dev" ]
     then
         PGPASSWORD=postgres psql postgres -h localhost -d postgres -f $ENV_PATH/ddl-database.sql
-    elif [ "$ENV_TYPE" == "prod" ] 
+    elif [ "$ENV_TYPE" == "prod" ]
     then
         PGPASSWORD=postgres psql postgres -h postgres -d postgres -f $ENV_PATH/ddl-database.sql
     fi
