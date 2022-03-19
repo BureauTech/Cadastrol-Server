@@ -35,6 +35,8 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           cache: maven
+      - name: Grant permission
+        run: chmod +x env.sh
       - name: Set env
         run: . env.sh prod
       - name: Grant permission
