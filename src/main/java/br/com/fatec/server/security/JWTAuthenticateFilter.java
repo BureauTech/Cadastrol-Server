@@ -48,9 +48,6 @@ public class JWTAuthenticateFilter extends UsernamePasswordAuthenticationFilter 
         String token = JWTUtil.generateToken(userData);
         Cookie cookie = new Cookie(JWTUtil.COOKIE_NAME, token);
         response.addCookie(cookie);
-        response.getWriter().write(token);
-        response.getWriter().flush();
     }
 
-    
 }
