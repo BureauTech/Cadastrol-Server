@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>br.com.fatec</groupId>
 	<artifactId>server</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>server</name>
 	<description>Servidor para o projeto do sexto semestre</description>
 	<properties>
@@ -38,7 +38,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.16</version>
+			<version>1.18.20</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -86,7 +86,7 @@
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.16</version>
+							<version>1.18.20</version>
 						</path>
 						<!-- This is needed when using Lombok 1.18.16 and above -->
 						<path>
