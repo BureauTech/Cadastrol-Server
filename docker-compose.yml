@@ -9,8 +9,8 @@ services:
       - 5432
     networks:
       - postgres
-  btalert_server:
-    container_name: btalert_server
+  cadastrol_server:
+    container_name: cadastrol_server
     build: 
       context: .
       dockerfile: Dockerfile.srv

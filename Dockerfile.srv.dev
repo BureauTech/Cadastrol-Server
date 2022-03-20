@@ -1,7 +1,0 @@
-FROM openjdk:11
-RUN mkdir -p /usr/src/app/
-WORKDIR /usr/src/app
-COPY . /usr/src/app
-RUN bash /usr/src/app/env.sh prod
-RUN cd /usr/src/app
-ENTRYPOINT ["bash","mvnw","spring-boot:run"]
