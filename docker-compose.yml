@@ -1,0 +1,25 @@
+version: '3.9'
+services:
+  postgres:
+    container_name: postgres
+    build: 
+      context: .
+      dockerfile: Dockerfile.pg
+    expose:
+      - 5432
+    networks:
+      - postgres
+  btalert_server:
+    container_name: btalert_server
+    build: 
+      context: .
+      dockerfile: Dockerfile.srv
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - postgres
+networks:
+  postgres:
+    name: postgres

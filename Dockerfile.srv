@@ -1,0 +1,8 @@
+FROM openjdk:11
+RUN mkdir -p /usr/src/app/
+WORKDIR /usr/src/app
+COPY . /usr/src/app
+RUN bash /usr/src/app/env.sh prod
+RUN bash /usr/src/app/mvnw clean package
+COPY target/server-*.jar /usr/src/app/app.jar
+ENTRYPOINT ["java","-jar","/usr/src/app/app.jar"]
