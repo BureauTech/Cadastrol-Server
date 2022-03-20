@@ -3,8 +3,6 @@ package br.com.fatec.server.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.projection.ProjectionFactory;
-import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.fatec.server.dtos.UserDto;
 import br.com.fatec.server.entities.UserEntity;
+import br.com.fatec.server.mappers.ProjectionMapper;
 import br.com.fatec.server.mappers.UserMapper;
 import br.com.fatec.server.projections.UserProjection;
 import br.com.fatec.server.repositories.UserRepository;
@@ -41,7 +40,7 @@ public class UserController {
     public ResponseEntity<SuccessResponse> create(@RequestBody UserEntity user) {
         user.setUsePassword(passwordEncoder.encode(user.getUsePassword()));
         UserEntity newUser = userRepository.save(user);
-        SuccessResponse response = new SuccessResponse(newUser);
+        SuccessResponse response = new SuccessResponse(ProjectionMapper.convertObject(UserProjection.WithoutPassword.class, newUser));
         return new ResponseEntity<SuccessResponse>(response, HttpStatus.OK);
     }
 
@@ -63,11 +62,8 @@ public class UserController {
     public ResponseEntity<SuccessResponse> update(@PathVariable Long useCod, @RequestBody UserDto newUser) {
         UserEntity user = userRepository.findByUseCod(useCod);
         mapper.updateUserFromDto(newUser, user);
-
-        ProjectionFactory pFactory = new SpelAwareProxyProjectionFactory();
-        UserProjection.WithoutPassword userWithoutPassword = pFactory
-            .createProjection(UserProjection.WithoutPassword.class, user);
-        SuccessResponse response = new SuccessResponse(userWithoutPassword);
+        UserEntity updatedUser = userRepository.save(user);
+        SuccessResponse response = new SuccessResponse(ProjectionMapper.convertObject(UserProjection.WithoutPassword.class, updatedUser));
         return new ResponseEntity<SuccessResponse>(response, HttpStatus.OK);
     }
 
