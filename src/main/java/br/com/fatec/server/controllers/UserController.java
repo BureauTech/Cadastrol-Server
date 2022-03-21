@@ -55,7 +55,7 @@ public class UserController {
 
     @GetMapping()
     public ResponseEntity<SuccessResponse> getAll(@RequestParam(value = "page", defaultValue = "0") Integer page) {
-        Page<UserProjection.WithoutPassword> user = userRepository.findAllProjectedBy(PageRequest.of(page, 25));
+        Page<UserProjection.WithoutPassword> user = userRepository.findAllProjectedBy(PageRequest.of(page, 10));
         SuccessResponse response = new SuccessResponse(user.getContent());
         return new ResponseEntity<SuccessResponse>(response, HttpStatus.OK);
     }
