@@ -19,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import br.com.fatec.server.entities.UserEntity;
+import br.com.fatec.server.exceptions.TokenNotFoundException;
 import br.com.fatec.server.services.UserDetailsData;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -44,19 +45,25 @@ public class JWTUtil {
         String jsonUser = mapper.writeValueAsString(userWithoutPassword);
 
         return Jwts.builder().claim("userDetails", jsonUser).setIssuer("br.com.fatec")
-            .setSubject(user.getUsername())
-            .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_IN_MS)).signWith(SignatureAlgorithm.HS512, SECRET_KEY).compact();
+                .setSubject(user.getUsername())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_IN_MS))
+                .signWith(SignatureAlgorithm.HS512, SECRET_KEY).compact();
     }
 
     public static Authentication parseToken(String token) throws JsonParseException, JsonMappingException, IOException {
+        if (token == null) {
+            throw new TokenNotFoundException("Token not found");
+        }
         ObjectMapper mapper = new ObjectMapper();
-        String credentialsJson = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().get("userDetails", String.class);
+        String credentialsJson = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody()
+                .get("userDetails", String.class);
         UserEntity user = mapper.readValue(credentialsJson, UserEntity.class);
         return new UsernamePasswordAuthenticationToken(user.getUseEmail(), user.getUsePassword(), new ArrayList<>());
     }
 
     public static String getTokenInCookies(Cookie[] cookies) {
-        if (cookies == null) return null;
+        if (cookies == null)
+            return null;
         for (Cookie cookie : cookies)
             if (cookie.getName().equals(JWTUtil.COOKIE_NAME))
                 return cookie.getValue();

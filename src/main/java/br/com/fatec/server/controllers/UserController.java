@@ -1,5 +1,7 @@
 package br.com.fatec.server.controllers;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.fatec.server.dtos.UserDto;
 import br.com.fatec.server.entities.UserEntity;
+import br.com.fatec.server.exceptions.ResourceAlreadyExistsException;
+import br.com.fatec.server.exceptions.ResourceNotFoundException;
 import br.com.fatec.server.mappers.ProjectionMapper;
 import br.com.fatec.server.mappers.UserMapper;
 import br.com.fatec.server.projections.UserProjection;
@@ -39,6 +43,11 @@ public class UserController {
     @PostMapping()
     public ResponseEntity<SuccessResponse> create(@RequestBody UserEntity user) {
         user.setUsePassword(passwordEncoder.encode(user.getUsePassword()));
+        Optional<UserEntity> userExists = userRepository.findByUseEmail(user.getUseEmail());
+        System.out.println(userExists.isEmpty());
+        if (userExists.isPresent()) {
+            throw new ResourceAlreadyExistsException("Email already exists");
+        }
         UserEntity newUser = userRepository.save(user);
         SuccessResponse response = new SuccessResponse(ProjectionMapper.convertObject(UserProjection.WithoutPassword.class, newUser));
         return new ResponseEntity<SuccessResponse>(response, HttpStatus.OK);
@@ -61,6 +70,9 @@ public class UserController {
     @PutMapping("/{useCod}")
     public ResponseEntity<SuccessResponse> update(@PathVariable Long useCod, @RequestBody UserDto newUser) {
         UserEntity user = userRepository.findByUseCod(useCod);
+        if (user == null) {
+            throw new ResourceNotFoundException("User not found in database");
+        }
         mapper.updateUserFromDto(newUser, user);
         UserEntity updatedUser = userRepository.save(user);
         SuccessResponse response = new SuccessResponse(ProjectionMapper.convertObject(UserProjection.WithoutPassword.class, updatedUser));

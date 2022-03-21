@@ -1,6 +1,7 @@
 package br.com.fatec.server.security;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,10 +11,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.util.AntPathMatcher;
+
+import br.com.fatec.server.responses.ErrorResponse;
 
 
 public class JWTValidateFilter extends BasicAuthenticationFilter {
@@ -29,8 +35,16 @@ public class JWTValidateFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         String jwtoken = JWTUtil.getTokenInCookies(request.getCookies());
-        SecurityContextHolder.getContext().setAuthentication(jwtoken != null ? JWTUtil.parseToken(jwtoken) : null);
-        chain.doFilter(request, response);
+        try {
+            SecurityContextHolder.getContext().setAuthentication(JWTUtil.parseToken(jwtoken));
+            chain.doFilter(request, response);
+        } catch (Exception e) {
+            String json = new ObjectMapper().writeValueAsString(new ErrorResponse("Your token is not valid. You need to log in.", HttpStatus.UNAUTHORIZED));
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            PrintWriter writter = response.getWriter();
+            writter.write(json);
+            writter.flush();
+        }
     }
 
     @Override
