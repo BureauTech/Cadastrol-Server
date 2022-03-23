@@ -42,7 +42,7 @@ jobs:
           apt-get update
           apt-get install --yes --no-install-recommends postgresql-client
 
-      - name: Set env
+      - name: Set up env
         run: bash env.sh prod
 
       - name: Grant permission
