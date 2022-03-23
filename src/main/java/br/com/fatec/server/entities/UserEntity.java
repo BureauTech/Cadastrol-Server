@@ -36,7 +36,4 @@ public class UserEntity {
 
     @Column(name = "use_password")
     private String usePassword;
-
-    @Column(name = "use_is_admin")
-    private Boolean useIsAdmin;
 }

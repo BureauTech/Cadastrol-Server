@@ -6,6 +6,5 @@ public interface UserProjection {
         String getUseName();
         String getUseEmail();
         String getUsePhone();
-        Boolean getUseIsAdmin();
     }
 }

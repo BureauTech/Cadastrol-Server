@@ -11,5 +11,4 @@ public class UserDto {
     private String useEmail;
     private String usePhone;
     private String usePassword;
-    private Boolean useIsAdmin;
 }
