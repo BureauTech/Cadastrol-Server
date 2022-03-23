@@ -34,9 +34,9 @@ public class JWTConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests()
-            .antMatchers(HttpMethod.POST, "/login*").permitAll()
-            .antMatchers(HttpMethod.POST, "/user*").permitAll()
+        http.csrf().disable().cors().and().authorizeRequests()
+            .mvcMatchers(HttpMethod.POST, "/login").permitAll()
+            .mvcMatchers(HttpMethod.POST, "/user").permitAll()
             .anyRequest().authenticated()
             .and()
             .addFilter(new JWTAuthenticateFilter(authenticationManager()))
@@ -49,7 +49,7 @@ public class JWTConfiguration extends WebSecurityConfigurerAdapter {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(Arrays.asList("*"));
+        corsConfiguration.setAllowedOriginPatterns(Arrays.asList("*"));
         corsConfiguration.setAllowedMethods(Arrays.asList("*"));
         corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
         corsConfiguration.setAllowCredentials(true);
