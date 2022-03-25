@@ -1,7 +1,6 @@
 package br.com.fatec.server.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import br.com.fatec.server.dtos.UserDto;
 import br.com.fatec.server.entities.UserEntity;
-import br.com.fatec.server.exceptions.ResourceAlreadyExistsException;
 import br.com.fatec.server.exceptions.ResourceNotFoundException;
 import br.com.fatec.server.mappers.ProjectionMapper;
 import br.com.fatec.server.mappers.UserMapper;
