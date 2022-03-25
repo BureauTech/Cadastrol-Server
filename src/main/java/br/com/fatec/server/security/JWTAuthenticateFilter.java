@@ -21,7 +21,7 @@ import br.com.fatec.server.entities.UserEntity;
 import br.com.fatec.server.services.UserDetailsData;
 
 public class JWTAuthenticateFilter extends UsernamePasswordAuthenticationFilter {
-    
+
     private final AuthenticationManager authenticationManager;
 
     public JWTAuthenticateFilter(AuthenticationManager authenticationManager) {
@@ -33,9 +33,9 @@ public class JWTAuthenticateFilter extends UsernamePasswordAuthenticationFilter 
             throws AuthenticationException {
         try {
             UserEntity user = new ObjectMapper().readValue(request.getInputStream(), UserEntity.class);
+
             return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                user.getUseEmail(), user.getUsePassword(), new ArrayList<>()
-            ));
+                    user.getUseEmail(), user.getUsePassword(), new ArrayList<>()));
         } catch (IOException e) {
             throw new RuntimeException("Error to authenticate the user", e);
         }

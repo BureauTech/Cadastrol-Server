@@ -49,4 +49,7 @@ jobs:
         run: chmod +x mvnw
 
       - name: Build with Maven
-        run: ./mvnw -B package --file pom.xml
+        run: ./mvnw package -DskipTests
+
+      - name: Running tests
+        run: ./mvnw clean test

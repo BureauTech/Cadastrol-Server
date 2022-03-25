@@ -50,7 +50,7 @@ public class JWTValidateFilter extends BasicAuthenticationFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         if (request.getMethod().equals("POST")) {
-            return skipUrls.stream().anyMatch(path -> pathMatcher.match(path, request.getServletPath()));
+            return skipUrls.stream().anyMatch(path -> pathMatcher.match(path, request.getRequestURI().replace("/api/v1", "")));
         }
         return false;
     }
