@@ -31,10 +31,6 @@ public class UserService {
 
     public <T> T createUser(UserEntity user, Class<T> projection) {
         user.setUsePassword(passwordEncoder.encode(user.getUsePassword()));
-        Optional<UserEntity> userExists = userRepository.findByUseEmail(user.getUseEmail());
-        if (userExists.isPresent()) {
-            throw new ResourceAlreadyExistsException("Email already exists");
-        }
         UserEntity newUser = userRepository.save(user);
         return ProjectionMapper.convertObject(projection, newUser);
     }

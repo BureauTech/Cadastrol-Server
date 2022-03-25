@@ -26,7 +26,7 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public final ResponseEntity<Object> handleDataIntegrityViolationException(
             DataIntegrityViolationException ex, WebRequest request) {
-        ErrorResponse error = new ErrorResponse("An information already exists and not can be duplicate", HttpStatus.CONFLICT);
+        ErrorResponse error = new ErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
         return new ResponseEntity(error, HttpStatus.valueOf(error.getStatusCode()));
     }
 
