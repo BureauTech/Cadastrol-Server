@@ -46,8 +46,8 @@ public class JWTAuthenticateFilter extends UsernamePasswordAuthenticationFilter 
             Authentication authResult) throws IOException, ServletException {
         UserDetailsData userData = (UserDetailsData) authResult.getPrincipal();
         String token = JWTUtil.generateToken(userData);
-        Cookie cookie = new Cookie(JWTUtil.COOKIE_NAME, token);
-        response.addCookie(cookie);
+        response.setHeader("Set-Cookie", String.format("%s=%s; SameSite=None; Secure", JWTUtil.COOKIE_NAME, token));
+        System.out.println(String.format("key=%s; SameSite=None; Secure", token));
     }
 
 }
