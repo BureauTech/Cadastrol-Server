@@ -46,7 +46,6 @@ public class JWTAuthenticateFilter extends UsernamePasswordAuthenticationFilter 
         UserDetailsData userData = (UserDetailsData) authResult.getPrincipal();
         String token = JWTUtil.generateToken(userData);
         response.setHeader("Set-Cookie", String.format("%s=%s; SameSite=None; Secure", JWTUtil.COOKIE_NAME, token));
-        System.out.println(String.format("key=%s; SameSite=None; Secure", token));
     }
 
 }
