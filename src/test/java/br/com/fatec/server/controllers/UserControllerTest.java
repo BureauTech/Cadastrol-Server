@@ -174,7 +174,7 @@ public class UserControllerTest {
         MvcResult result = mockMvc.perform(get(String.format("/user?page=%d", 0))
             .cookie(jwtCookie)).andExpect(status().isOk()).andReturn();
 
-        List<UserProjection.WithoutPassword> userList = userRepository.findAllProjectedBy(PageRequest.of(0, 10)).getContent();
+        List<UserProjection.WithoutPassword> userList = userRepository.findAllProjectedByOrderByUseCodAsc(PageRequest.of(0, 10)).getContent();
         SuccessResponse successResponse = new SuccessResponse(userList);
         String expectedJson = objectMapper.writeValueAsString(successResponse);
         assertThat(result.getResponse().getContentAsString(), containsString(expectedJson));

@@ -34,7 +34,7 @@ public class UserService {
     }
 
     public List<UserProjection.WithoutPassword> getAllUsers(Integer page) {
-        Page<UserProjection.WithoutPassword> users = userRepository.findAllProjectedBy(PageRequest.of(page, 10));
+        Page<UserProjection.WithoutPassword> users = userRepository.findAllProjectedByOrderByUseCodAsc(PageRequest.of(page, 10));
         return users.getContent();
     }
 

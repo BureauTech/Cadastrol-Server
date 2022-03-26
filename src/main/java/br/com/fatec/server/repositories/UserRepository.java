@@ -19,5 +19,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     public List<UserEntity> findAll();
 
-    public Page<UserProjection.WithoutPassword> findAllProjectedBy(Pageable pageable);
+    public Page<UserProjection.WithoutPassword> findAllProjectedByOrderByUseCodAsc(Pageable pageable);
 }
