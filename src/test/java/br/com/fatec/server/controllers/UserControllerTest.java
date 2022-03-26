@@ -42,8 +42,6 @@ import br.com.fatec.server.security.JWTUtil;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-// @Transactional
-// @Rollback
 @ActiveProfiles("test")
 @DisplayName("UserControllerTest")
 public class UserControllerTest {
@@ -57,17 +55,15 @@ public class UserControllerTest {
     private void createUser(UserEntity user) throws JsonProcessingException, Exception {
         user.setUsePassword(new BCryptPasswordEncoder().encode(user.getUsePassword()));
         userRepository.save(user);
-
     }
 
     private Cookie performLogin(UserEntity user) throws JsonProcessingException, Exception {
-        String authJson = "{\"useEmail\": \"" + user.getUseEmail() + "\", \"usePassword\": \""
-                + user.getUsePassword() + "\"}";
+        String authJson = String.format("{\"useEmail\": \"%s\", \"usePassword\": \"%s\"}",
+            user.getUseEmail(), user.getUsePassword());
 
         return mockMvc.perform(post("/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(authJson))
-                .andExpect(status().isOk()).andReturn().getResponse().getCookie(JWTUtil.COOKIE_NAME);
+            .contentType(MediaType.APPLICATION_JSON).content(authJson))
+            .andExpect(status().isOk()).andReturn().getResponse().getCookie(JWTUtil.COOKIE_NAME);
     }
 
     private UserEntity getCreatedUser(UserEntity user) {
@@ -92,11 +88,11 @@ public class UserControllerTest {
         user.setUsePhone("shouldCreateUser");
 
         MvcResult result = mockMvc.perform(post("/user")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(user)))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("shouldCreateUser@testing.com")))
-                .andReturn();
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(user)))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("shouldCreateUser@testing.com")))
+            .andReturn();
         String userCreatedJson = userToJson(getUserWithoutPassword(getCreatedUser(user)));
         assertThat(result.getResponse().getContentAsString(), containsString(userCreatedJson));
     }
@@ -114,10 +110,8 @@ public class UserControllerTest {
         user.setUsePassword("strongpassword");
 
         Cookie jwtCookie = performLogin(user);
-        // user = getCreatedUser(user);
         MvcResult result = mockMvc.perform(get(String.format("/user/%d", user.getUseCod()))
-                .cookie(jwtCookie))
-                .andExpect(status().isOk()).andReturn();
+            .cookie(jwtCookie)).andExpect(status().isOk()).andReturn();
 
         String userCreatedJson = userToJson(getUserWithoutPassword(user));
         assertThat(result.getResponse().getContentAsString(), containsString(userCreatedJson));
@@ -135,13 +129,12 @@ public class UserControllerTest {
         createUser(user);
         user.setUsePassword("strongpassword");
         Cookie jwtCookie = performLogin(user);
-        // user = getCreatedUser(user);
         user.setUseName("new cool name");
         MvcResult result = mockMvc.perform(put(String.format("/user/%d", user.getUseCod()))
-                .content(userToJson(user))
-                .contentType(MediaType.APPLICATION_JSON)
-                .cookie(jwtCookie))
-                .andExpect(status().isOk()).andReturn();
+            .content(userToJson(user))
+            .contentType(MediaType.APPLICATION_JSON)
+            .cookie(jwtCookie))
+            .andExpect(status().isOk()).andReturn();
 
         assertThat(result.getResponse().getContentAsString(), containsString("new cool name"));
     }
@@ -158,10 +151,8 @@ public class UserControllerTest {
         createUser(user);
         user.setUsePassword("strongpassword");
         Cookie jwtCookie = performLogin(user);
-        // user = getCreatedUser(user);
         MvcResult result = mockMvc.perform(delete(String.format("/user/%d", user.getUseCod()))
-                .cookie(jwtCookie))
-                .andExpect(status().isOk()).andReturn();
+            .cookie(jwtCookie)).andExpect(status().isOk()).andReturn();
 
         assertEquals(result.getResponse().getStatus(), HttpStatus.OK.value());
     }
@@ -178,15 +169,12 @@ public class UserControllerTest {
             createUser(user);
             user.setUsePassword("strongpassword");
         }
-        // user = getCreatedUser(user);
 
         Cookie jwtCookie = performLogin(user);
         MvcResult result = mockMvc.perform(get(String.format("/user?page=%d", 0))
-                .cookie(jwtCookie))
-                .andExpect(status().isOk()).andReturn();
+            .cookie(jwtCookie)).andExpect(status().isOk()).andReturn();
 
-        List<UserProjection.WithoutPassword> userList = userRepository.findAllProjectedBy(PageRequest.of(0, 10))
-                .getContent();
+        List<UserProjection.WithoutPassword> userList = userRepository.findAllProjectedBy(PageRequest.of(0, 10)).getContent();
         SuccessResponse successResponse = new SuccessResponse(userList);
         String expectedJson = objectMapper.writeValueAsString(successResponse);
         assertThat(result.getResponse().getContentAsString(), containsString(expectedJson));
