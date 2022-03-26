@@ -47,6 +47,8 @@ public class UserService {
         if (user == null) {
             throw new ResourceNotFoundException("User not found in database");
         }
+        if (newUser.getUsePassword() != null)
+            newUser.setUsePassword(passwordEncoder.encode(newUser.getUsePassword()));
         mapper.updateUserFromDto(newUser, user);
         UserEntity updatedUser = userRepository.save(user);
         return ProjectionMapper.convertObject(projection, updatedUser);
