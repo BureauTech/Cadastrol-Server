@@ -1,0 +1,6 @@
+FROM openjdk:11
+WORKDIR /usr/src/app
+COPY . .
+RUN bash env.sh prod
+RUN bash mvnw clean package -DskipTests && cp target/server-*.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
