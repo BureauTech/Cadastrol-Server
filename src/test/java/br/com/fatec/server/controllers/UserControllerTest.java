@@ -87,9 +87,15 @@ public class UserControllerTest {
         user.setUsePassword("strongpassword");
         user.setUsePhone("shouldCreateUser");
 
+        createUser(user);
+        user.setUsePassword("strongpassword");
+
+        Cookie jwtCookie = performLogin(user);
+        userRepository.delete(user);
+
         MvcResult result = mockMvc.perform(post("/user")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(user)))
+            .content(objectMapper.writeValueAsString(user)).cookie(jwtCookie))
             .andExpect(status().isOk())
             .andExpect(content().string(containsString("shouldCreateUser@testing.com")))
             .andReturn();
