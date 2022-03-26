@@ -87,9 +87,15 @@ public class UserControllerTest {
         user.setUsePassword("strongpassword");
         user.setUsePhone("shouldCreateUser");
 
+        createUser(user);
+        user.setUsePassword("strongpassword");
+
+        Cookie jwtCookie = performLogin(user);
+        userRepository.delete(user);
+
         MvcResult result = mockMvc.perform(post("/user")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(user)))
+            .content(objectMapper.writeValueAsString(user)).cookie(jwtCookie))
             .andExpect(status().isOk())
             .andExpect(content().string(containsString("shouldCreateUser@testing.com")))
             .andReturn();
@@ -174,7 +180,7 @@ public class UserControllerTest {
         MvcResult result = mockMvc.perform(get(String.format("/user?page=%d", 0))
             .cookie(jwtCookie)).andExpect(status().isOk()).andReturn();
 
-        List<UserProjection.WithoutPassword> userList = userRepository.findAllProjectedBy(PageRequest.of(0, 10)).getContent();
+        List<UserProjection.WithoutPassword> userList = userRepository.findAllProjectedByOrderByUseCodAsc(PageRequest.of(0, 10)).getContent();
         SuccessResponse successResponse = new SuccessResponse(userList);
         String expectedJson = objectMapper.writeValueAsString(successResponse);
         assertThat(result.getResponse().getContentAsString(), containsString(expectedJson));

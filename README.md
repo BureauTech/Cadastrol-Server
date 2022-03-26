@@ -1,7 +1,8 @@
-# Cadastrol-Server
-
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/BureauTech/Cadastrol-Server/)
 [![Java CI](https://github.com/BureauTech/Cadastrol-Server/actions/workflows/maven.yml/badge.svg)](https://github.com/BureauTech/Cadastrol-Server/actions/workflows/maven.yml)
 [![Docker Image CI](https://github.com/BureauTech/Cadastrol-Server/actions/workflows/docker-image.yml/badge.svg)](https://github.com/BureauTech/Cadastrol-Server/actions/workflows/docker-image.yml)
+
+# Cadastrol-Server
 
 ## How to install
 

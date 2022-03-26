@@ -24,7 +24,7 @@ import br.com.fatec.server.responses.ErrorResponse;
 
 public class JWTValidateFilter extends BasicAuthenticationFilter {
 
-    private Set<String> skipUrls = new HashSet<>(Arrays.asList("/user","/login"));
+    private Set<String> skipUrls = new HashSet<>(Arrays.asList("/login"));
     private AntPathMatcher pathMatcher = new AntPathMatcher();
 
     public JWTValidateFilter(AuthenticationManager authenticationManager) {

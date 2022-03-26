@@ -34,7 +34,7 @@ public class UserService {
     }
 
     public List<UserProjection.WithoutPassword> getAllUsers(Integer page) {
-        Page<UserProjection.WithoutPassword> users = userRepository.findAllProjectedBy(PageRequest.of(page, 10));
+        Page<UserProjection.WithoutPassword> users = userRepository.findAllProjectedByOrderByUseCodAsc(PageRequest.of(page, 10));
         return users.getContent();
     }
 
@@ -47,6 +47,8 @@ public class UserService {
         if (user == null) {
             throw new ResourceNotFoundException("User not found in database");
         }
+        if (newUser.getUsePassword() != null)
+            newUser.setUsePassword(passwordEncoder.encode(newUser.getUsePassword()));
         mapper.updateUserFromDto(newUser, user);
         UserEntity updatedUser = userRepository.save(user);
         return ProjectionMapper.convertObject(projection, updatedUser);
