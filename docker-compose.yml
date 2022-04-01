@@ -20,7 +20,7 @@ services:
       - postgres
     networks:
       - postgres
-  nginx:
+  nginx-vts:
     image: nginx-vts
     ports:
     - "8000:8000"
@@ -31,7 +31,7 @@ services:
     volumes:
     - ./prometheus.yml:/etc/prometheus/prometheus.yml
     links:
-      - nginx
+      - nginx-vts
   grafana:
     image: grafana/grafana
     ports:
