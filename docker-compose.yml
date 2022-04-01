@@ -20,8 +20,11 @@ services:
       - postgres
     networks:
       - postgres
-  nginx-vts:
-    image: nginx-vts
+  nginx:
+    container_name: nginx
+    build: 
+      context: .
+      dockerfile: Dockerfile.nginx
     ports:
     - "8000:8000"
   prometheus:
@@ -31,7 +34,7 @@ services:
     volumes:
     - ./prometheus.yml:/etc/prometheus/prometheus.yml
     links:
-      - nginx-vts
+      - nginx
   grafana:
     image: grafana/grafana
     ports:
