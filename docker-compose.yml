@@ -4,43 +4,50 @@ services:
     container_name: postgres
     build: 
       context: .
-      dockerfile: Dockerfile.pg
+      dockerfile: dockerfile.postgres
     ports:
       - 5433:5432
     networks:
       - postgres
+
   cadastrol_server:
     container_name: cadastrol_server
     build: 
       context: .
-      dockerfile: Dockerfile.srv
+      dockerfile: dockerfile.java-maven
     ports:
-      - "8080:8080"
+      - 8080:8080
     depends_on:
       - postgres
     networks:
       - postgres
+
   nginx:
     container_name: nginx
     build: 
       context: .
-      dockerfile: Dockerfile.nginx
+      dockerfile: dockerfile.nginx
     ports:
-    - "8000:8000"
+      - 8000:8000
+
   prometheus:
+    container_name: prometheus
     image: prom/prometheus
     ports:
-    - "9090:9090"
+      - 9090:9090
     volumes:
-    - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
     links:
       - nginx
+
   grafana:
+    container_name: grafana
     image: grafana/grafana
     ports:
-    - "3000:3000"
+      - 3000:3000
     links:
-    - prometheus
+      - prometheus
+
 networks:
   postgres:
     name: postgres

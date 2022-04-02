@@ -43,7 +43,7 @@ jobs:
           apt-get install --yes --no-install-recommends postgresql-client
 
       - name: Set up env
-        run: bash env.sh prod
+        run: bash setup-env.sh docker
 
       - name: Grant permission
         run: chmod +x mvnw

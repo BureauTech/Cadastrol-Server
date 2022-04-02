@@ -20,13 +20,13 @@ In case you want to run it in your machine without using docker, you must run th
 
 For development environment:
 
-```bash env.sh```
+```bash setup-env.sh```
 
 ```mvnw spring-boot:run```
 
 For production environment:
 
-```bash env.sh prod```
+```bash setup-env.sh docker```
 
 ```mvnw clean package -DskipTests && cp target/server-*.jar app.jar```
 
