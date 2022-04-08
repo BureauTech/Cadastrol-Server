@@ -2,16 +2,18 @@ version: '3.9'
 services:
   postgres:
     container_name: postgres
+    restart: always
     build: 
       context: .
       dockerfile: dockerfile.postgres
     ports:
       - 5433:5432
     networks:
-      - postgres
+      - backend_network
 
   cadastrol_server:
     container_name: cadastrol_server
+    restart: always
     build: 
       context: .
       dockerfile: dockerfile.java-maven
@@ -20,18 +22,24 @@ services:
     depends_on:
       - postgres
     networks:
-      - postgres
+      - backend_network
 
   nginx:
     container_name: nginx
+    restart: always
     build: 
       context: .
       dockerfile: dockerfile.nginx
     ports:
       - 8000:8000
+    depends_on:
+      - cadastrol_server
+    networks:
+      - backend_network
 
   prometheus:
     container_name: prometheus
+    restart: always
     image: prom/prometheus
     ports:
       - 9090:9090
@@ -39,15 +47,20 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     links:
       - nginx
+    networks:
+      - backend_network
 
   grafana:
     container_name: grafana
+    restart: always
     image: grafana/grafana
     ports:
       - 3000:3000
     links:
       - prometheus
+    networks:
+      - backend_network
 
 networks:
-  postgres:
-    name: postgres
+  backend_network:
+    name: backend_network
