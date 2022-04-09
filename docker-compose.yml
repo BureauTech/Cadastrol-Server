@@ -18,7 +18,7 @@ services:
       context: .
       dockerfile: dockerfile.java-maven
     ports:
-      - 8080:8080
+      - 8090:8090
     depends_on:
       - postgres
     networks:
@@ -58,6 +58,25 @@ services:
       - 3000:3000
     links:
       - prometheus
+    networks:
+      - backend_network
+  
+  node-exporter:
+    image: prom/node-exporter
+    ports:
+      - 9100:9100
+    networks:
+      - backend_network
+
+  cadvisor:
+    image: google/cadvisor:latest
+    ports:
+      - 8080:8080
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
     networks:
       - backend_network
 
