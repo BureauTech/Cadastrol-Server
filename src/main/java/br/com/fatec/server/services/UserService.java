@@ -39,7 +39,11 @@ public class UserService {
     }
 
     public <T> T getUserById(Long useCod, Class<T> projection) {
-        return userRepository.findByUseCod(useCod, projection);
+        T user = userRepository.findByUseCod(useCod, projection);
+        if (user == null) {
+            throw new ResourceNotFoundException("User not found in database");
+        }
+        return user;
     }
 
     public <T> T updateUser(Long useCod, UserDto newUser, Class<T> projection) {
