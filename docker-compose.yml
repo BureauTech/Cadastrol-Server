@@ -11,8 +11,8 @@ services:
     networks:
       - backend_network
 
-  cadastrol_server:
-    container_name: cadastrol_server
+  cadastrol-server:
+    container_name: cadastrol-server
     restart: always
     build: 
       context: .
@@ -33,36 +33,13 @@ services:
     ports:
       - 8000:8000
     depends_on:
-      - cadastrol_server
+      - cadastrol-server
     networks:
       - backend_network
 
-  prometheus:
-    container_name: prometheus
-    restart: always
-    image: prom/prometheus
-    ports:
-      - 9090:9090
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    links:
-      - nginx
-    networks:
-      - backend_network
-
-  grafana:
-    container_name: grafana
-    restart: always
-    image: grafana/grafana
-    ports:
-      - 3000:3000
-    links:
-      - prometheus
-    networks:
-      - backend_network
-  
   node-exporter:
     container_name: node-exporter
+    restart: always
     image: prom/node-exporter
     ports:
       - 9100:9100
@@ -71,6 +48,7 @@ services:
 
   cadvisor:
     container_name: cadvisor
+    restart: always
     image: google/cadvisor:latest
     ports:
       - 8080:8080
@@ -84,11 +62,41 @@ services:
 
   pg-exporter:
     container_name: pg-exporter
+    restart: always
     build: 
       context: .
       dockerfile: dockerfile.pg-exporter
     ports:
       - 9630:9630
+    depends_on:
+      - postgres
+    networks:
+      - backend_network
+
+  prometheus:
+    container_name: prometheus
+    restart: always
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    depends_on:
+      - nginx
+      - node-exporter
+      - cadvisor
+      - pg-exporter
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - backend_network
+
+  grafana:
+    container_name: grafana
+    restart: always
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    depends_on:
+      - prometheus
     networks:
       - backend_network
 
