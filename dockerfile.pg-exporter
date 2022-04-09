@@ -11,5 +11,3 @@ WORKDIR "/pg_exporter"
 RUN make
 ENV PG_EXPORTER_URL="postgres://postgres:postgres@postgres:5432/postgres"
 ENTRYPOINT ["./pg_exporter"]
-# ENTRYPOINT ["tail"]
-# CMD ["-f","/dev/null"]
