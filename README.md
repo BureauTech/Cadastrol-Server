@@ -7,6 +7,8 @@
 
 This is the back-end of our test application. [Click here to access the front-end](https://github.com/BureauTech/Cadastrol-Client).
 
+The documentation with all endpoints available and how to call them is [available here](https://github.com/BureauTech/APIs-Docs).
+
 ## How to install
 
 ### Docker Image
