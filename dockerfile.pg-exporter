@@ -1,0 +1,13 @@
+FROM ubuntu:18.04
+RUN apt-get update 
+RUN apt-get install -y git 
+RUN apt-get install -y make 
+RUN apt-get install -y curl
+RUN curl https://dl.google.com/go/go1.18.linux-amd64.tar.gz -o go.tar.gz
+RUN rm -rf /usr/local/go && tar -C /usr/local -xzf go.tar.gz
+ENV PATH="${PATH}:/usr/local/go/bin"
+RUN git clone https://github.com/Vonng/pg_exporter.git
+WORKDIR "/pg_exporter"
+RUN make
+ENV PG_EXPORTER_URL="postgres://postgres:postgres@postgres:5432/postgres"
+ENTRYPOINT ["./pg_exporter"]

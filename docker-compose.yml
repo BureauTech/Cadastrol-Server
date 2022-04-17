@@ -1,25 +1,113 @@
-version: '3.9'
+version: '3.7'
 services:
   postgres:
     container_name: postgres
+    restart: always
     build: 
       context: .
-      dockerfile: Dockerfile.pg
+      dockerfile: dockerfile.postgres
     ports:
       - 5433:5432
     networks:
-      - postgres
-  cadastrol_server:
-    container_name: cadastrol_server
+      - backend_network
+
+  cadastrol-server:
+    container_name: cadastrol-server
+    restart: always
     build: 
       context: .
-      dockerfile: Dockerfile.srv
+      dockerfile: dockerfile.java-maven
     ports:
-      - "8080:8080"
+      - 8090:8090
     depends_on:
       - postgres
     networks:
+      - backend_network
+
+  nginx:
+    container_name: nginx
+    restart: always
+    build: 
+      context: .
+      dockerfile: dockerfile.nginx
+    ports:
+      - 8000:8000
+    depends_on:
+      - cadastrol-server
+    networks:
+      - backend_network
+
+  node-exporter:
+    container_name: node-exporter
+    restart: always
+    image: prom/node-exporter
+    ports:
+      - 9100:9100
+    networks:
+      - backend_network
+
+  cadvisor:
+    container_name: cadvisor
+    restart: always
+    image: google/cadvisor:latest
+    ports:
+      - 8080:8080
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - backend_network
+
+  pg-exporter:
+    container_name: pg-exporter
+    restart: always
+    build: 
+      context: .
+      dockerfile: dockerfile.pg-exporter
+    ports:
+      - 9630:9630
+    depends_on:
       - postgres
+    networks:
+      - backend_network
+
+  prometheus:
+    container_name: prometheus
+    restart: always
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    depends_on:
+      - nginx
+      - node-exporter
+      - cadvisor
+      - pg-exporter
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alert.rules.yml:/etc/prometheus/alert.rules.yml      
+    networks:
+      - backend_network
+
+  grafana:
+    container_name: grafana
+    restart: always
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    depends_on:
+      - prometheus
+    networks:
+      - backend_network
+
+  alertmanager:
+    image: prom/alertmanager
+    ports:
+      - 9093:9093
+    networks: 
+      - backend_network
+
 networks:
-  postgres:
-    name: postgres
+  backend_network:
+    name: backend_network
