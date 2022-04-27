@@ -2,7 +2,6 @@ version: '3.7'
 services:
   postgres:
     container_name: postgres
-    restart: always
     build: 
       context: .
       dockerfile: dockerfile.postgres
@@ -13,7 +12,6 @@ services:
 
   cadastrol-server:
     container_name: cadastrol-server
-    restart: always
     build: 
       context: .
       dockerfile: dockerfile.java-maven
@@ -26,7 +24,6 @@ services:
 
   nginx:
     container_name: nginx
-    restart: always
     build: 
       context: .
       dockerfile: dockerfile.nginx
@@ -39,7 +36,6 @@ services:
 
   node-exporter:
     container_name: node-exporter
-    restart: always
     image: prom/node-exporter
     ports:
       - 9100:9100
@@ -48,7 +44,6 @@ services:
 
   cadvisor:
     container_name: cadvisor
-    restart: always
     image: google/cadvisor:latest
     ports:
       - 8080:8080
@@ -62,7 +57,6 @@ services:
 
   pg-exporter:
     container_name: pg-exporter
-    restart: always
     build: 
       context: .
       dockerfile: dockerfile.pg-exporter
@@ -75,25 +69,24 @@ services:
 
   prometheus:
     container_name: prometheus
-    restart: always
-    image: prom/prometheus
+    build: 
+      context: .
+      dockerfile: dockerfile.prometheus
     ports:
       - 9090:9090
     depends_on:
       - nginx
       - node-exporter
       - cadvisor
-      - pg-exporter
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./alert.rules.yml:/etc/prometheus/alert.rules.yml      
+      - pg-exporter  
     networks:
       - backend_network
-
+  
   grafana:
     container_name: grafana
-    restart: always
-    image: grafana/grafana
+    build: 
+      context: .
+      dockerfile: dockerfile.grafana
     ports:
       - 3000:3000
     depends_on:

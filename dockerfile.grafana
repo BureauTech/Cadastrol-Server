@@ -1,0 +1,10 @@
+FROM grafana/grafana
+
+COPY grafana/grafana.ini /etc/grafana/grafana.ini
+COPY grafana/provisioning.yml /etc/grafana/provisioning/dashboards/provisioning.yml
+COPY grafana/datasource.yml /etc/grafana/provisioning/datasources/datasource.yml
+
+RUN mkdir /var/lib/grafana/dashboards
+
+COPY grafana/cadvisor-exporter.json /var/lib/grafana/dashboards/cadvisor-exporter.json
+COPY grafana/nginx-stats.json /var/lib/grafana/dashboards/nginx-stats.json
