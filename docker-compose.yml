@@ -12,9 +12,11 @@ services:
     deploy:
       resources:
         limits:
+          cpus: '0.25'
           memory: 128M
         reservations:
-          memory: '64M'
+          cpus: '0.10'
+          memory: 64M
 
   cadastrol-server:
     container_name: cadastrol-server
@@ -30,9 +32,11 @@ services:
     deploy:
       resources:
         limits:
+          cpus: '0.50'
           memory: 256M
         reservations:
-          memory: '128M'
+          cpus: '0.10'
+          memory: 128M
 
   nginx:
     container_name: nginx
@@ -48,9 +52,11 @@ services:
     deploy:
       resources:
         limits:
+          cpus: '0.25'
           memory: 128M
         reservations:
-          memory: '64M'
+          cpus: '0.10'
+          memory: 64M
 
   node-exporter:
     container_name: node-exporter
@@ -62,9 +68,11 @@ services:
     deploy:
       resources:
         limits:
+          cpus: '0.25'
           memory: 128M
         reservations:
-          memory: '64M'
+          cpus: '0.10'
+          memory: 64M
 
   cadvisor:
     container_name: cadvisor
@@ -81,9 +89,11 @@ services:
     deploy:
       resources:
         limits:
+          cpus: '0.25'
           memory: 128M
         reservations:
-          memory: '64M'
+          cpus: '0.10'
+          memory: 64M
 
   pg-exporter:
     container_name: pg-exporter
@@ -99,9 +109,11 @@ services:
     deploy:
       resources:
         limits:
+          cpus: '0.25'
           memory: 128M
         reservations:
-          memory: '64M'
+          cpus: '0.10'
+          memory: 64M
 
   prometheus:
     container_name: prometheus
@@ -120,11 +132,11 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.50'
+          cpus: '0.25'
           memory: 128M
         reservations:
-          cpus: '0.25'
-          memory: '64M'
+          cpus: '0.10'
+          memory: 64M
 
   grafana:
     container_name: grafana
@@ -140,9 +152,11 @@ services:
     deploy:
       resources:
         limits:
+          cpus: '0.25'
           memory: 128M
         reservations:
-          memory: '64M'
+          cpus: '0.10'
+          memory: 64M
 
   alertmanager:
     image: prom/alertmanager
@@ -153,9 +167,11 @@ services:
     deploy:
       resources:
         limits:
+          cpus: '0.25'
           memory: 128M
         reservations:
-          memory: '64M'
+          cpus: '0.10'
+          memory: 64M
 
 networks:
   backend_network:
