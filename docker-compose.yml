@@ -9,6 +9,12 @@ services:
       - 5433:5432
     networks:
       - backend_network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: '64M'
 
   cadastrol-server:
     container_name: cadastrol-server
@@ -21,6 +27,12 @@ services:
       - postgres
     networks:
       - backend_network
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: '128M'
 
   nginx:
     container_name: nginx
@@ -33,6 +45,12 @@ services:
       - cadastrol-server
     networks:
       - backend_network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: '64M'
 
   node-exporter:
     container_name: node-exporter
@@ -41,6 +59,12 @@ services:
       - 9100:9100
     networks:
       - backend_network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: '64M'
 
   cadvisor:
     container_name: cadvisor
@@ -54,6 +78,12 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
     networks:
       - backend_network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: '64M'
 
   pg-exporter:
     container_name: pg-exporter
@@ -66,6 +96,12 @@ services:
       - postgres
     networks:
       - backend_network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: '64M'
 
   prometheus:
     container_name: prometheus
@@ -81,7 +117,15 @@ services:
       - pg-exporter  
     networks:
       - backend_network
-  
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 128M
+        reservations:
+          cpus: '0.25'
+          memory: '64M'
+
   grafana:
     container_name: grafana
     build: 
@@ -93,6 +137,12 @@ services:
       - prometheus
     networks:
       - backend_network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: '64M'
 
   alertmanager:
     image: prom/alertmanager
@@ -100,6 +150,12 @@ services:
       - 9093:9093
     networks: 
       - backend_network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: '64M'
 
 networks:
   backend_network:
