@@ -120,6 +120,10 @@ services:
     build: 
       context: .
       dockerfile: dockerfile.prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.enable-admin-api'
+      - '--web.enable-lifecycle'
     ports:
       - 9090:9090
     depends_on:
