@@ -10,7 +10,7 @@ rule_files:
 alerting:
   alertmanagers:
   - static_configs:
-    - targets: ['localhost:9093']
+    - targets: ['alertmanager:9093']
 
 scrape_configs:
   - job_name: 'prometheus'

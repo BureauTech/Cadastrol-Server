@@ -163,7 +163,11 @@ services:
           memory: 64M
 
   alertmanager:
-    image: prom/alertmanager
+    container_name: alertmanager
+    build: 
+      context: .
+      dockerfile: dockerfile.alertmanager
+    command: --config.file=/etc/prometheus/alert_manager/alertmanager.yml
     ports:
       - 9093:9093
     networks: 
