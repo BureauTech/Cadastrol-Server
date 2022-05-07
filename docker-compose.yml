@@ -1,8 +1,9 @@
 version: '3.7'
 services:
+
   postgres:
     container_name: postgres
-    build: 
+    build:
       context: .
       dockerfile: postgres/dockerfile.postgres
     ports:
@@ -23,7 +24,7 @@ services:
 
   cadastrol-server:
     container_name: cadastrol-server
-    build: 
+    build:
       context: .
       dockerfile: src/dockerfile.java-maven
     ports:
@@ -43,7 +44,7 @@ services:
 
   nginx:
     container_name: nginx
-    build: 
+    build:
       context: .
       dockerfile: nginx/dockerfile.nginx
     ports:
@@ -52,14 +53,6 @@ services:
       - cadastrol-server
     networks:
       - backend_network
-    deploy:
-      resources:
-        limits:
-          cpus: '0.25'
-          memory: 128M
-        reservations:
-          cpus: '0.10'
-          memory: 64M
 
   node-exporter:
     container_name: node-exporter
@@ -68,14 +61,6 @@ services:
       - 9100:9100
     networks:
       - backend_network
-    deploy:
-      resources:
-        limits:
-          cpus: '0.25'
-          memory: 128M
-        reservations:
-          cpus: '0.10'
-          memory: 64M
 
   cadvisor:
     container_name: cadvisor
@@ -89,18 +74,10 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
     networks:
       - backend_network
-    deploy:
-      resources:
-        limits:
-          cpus: '0.25'
-          memory: 128M
-        reservations:
-          cpus: '0.10'
-          memory: 64M
 
   pg-exporter:
     container_name: pg-exporter
-    build: 
+    build:
       context: .
       dockerfile: postgres/dockerfile.pg-exporter
     ports:
@@ -109,18 +86,10 @@ services:
       - postgres
     networks:
       - backend_network
-    deploy:
-      resources:
-        limits:
-          cpus: '0.25'
-          memory: 128M
-        reservations:
-          cpus: '0.10'
-          memory: 64M
 
   prometheus:
     container_name: prometheus
-    build: 
+    build:
       context: .
       dockerfile: prometheus/dockerfile.prometheus
     command:
@@ -133,21 +102,13 @@ services:
       - nginx
       - node-exporter
       - cadvisor
-      - pg-exporter  
+      - pg-exporter
     networks:
       - backend_network
-    deploy:
-      resources:
-        limits:
-          cpus: '0.25'
-          memory: 128M
-        reservations:
-          cpus: '0.10'
-          memory: 64M
 
   grafana:
     container_name: grafana
-    build: 
+    build:
       context: .
       dockerfile: grafana/dockerfile.grafana
     ports:
@@ -156,35 +117,18 @@ services:
       - prometheus
     networks:
       - backend_network
-    deploy:
-      resources:
-        limits:
-          cpus: '0.25'
-          memory: 128M
-        reservations:
-          cpus: '0.10'
-          memory: 64M
 
   alertmanager:
     container_name: alertmanager
-    build: 
+    build:
       context: .
       dockerfile: prometheus/alertmanager/dockerfile.alertmanager
     command: --config.file=/etc/prometheus/alertmanager/alertmanager.yml
     ports:
       - 9093:9093
-    networks: 
+    networks:
       - backend_network
-    deploy:
-      resources:
-        limits:
-          cpus: '0.25'
-          memory: 128M
-        reservations:
-          cpus: '0.10'
-          memory: 64M
 
 networks:
   backend_network:
     name: backend_network
-    
