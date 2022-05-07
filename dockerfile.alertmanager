@@ -1,3 +1,0 @@
-FROM prom/alertmanager
-
-COPY prometheus/alert_manager/alertmanager.yml /etc/prometheus/alert_manager/alertmanager.yml

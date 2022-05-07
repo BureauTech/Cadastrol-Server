@@ -4,7 +4,7 @@ services:
     container_name: postgres
     build: 
       context: .
-      dockerfile: dockerfile.postgres
+      dockerfile: postgres/dockerfile.postgres
     ports:
       - 5433:5432
     volumes:
@@ -25,7 +25,7 @@ services:
     container_name: cadastrol-server
     build: 
       context: .
-      dockerfile: dockerfile.java-maven
+      dockerfile: src/dockerfile.java-maven
     ports:
       - 8090:8090
     depends_on:
@@ -45,7 +45,7 @@ services:
     container_name: nginx
     build: 
       context: .
-      dockerfile: dockerfile.nginx
+      dockerfile: nginx/dockerfile.nginx
     ports:
       - 8000:8000
     depends_on:
@@ -102,7 +102,7 @@ services:
     container_name: pg-exporter
     build: 
       context: .
-      dockerfile: dockerfile.pg-exporter
+      dockerfile: postgres/dockerfile.pg-exporter
     ports:
       - 9630:9630
     depends_on:
@@ -122,7 +122,7 @@ services:
     container_name: prometheus
     build: 
       context: .
-      dockerfile: dockerfile.prometheus
+      dockerfile: prometheus/dockerfile.prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--web.enable-admin-api'
@@ -149,7 +149,7 @@ services:
     container_name: grafana
     build: 
       context: .
-      dockerfile: dockerfile.grafana
+      dockerfile: grafana/dockerfile.grafana
     ports:
       - 3000:3000
     depends_on:
@@ -169,8 +169,8 @@ services:
     container_name: alertmanager
     build: 
       context: .
-      dockerfile: dockerfile.alertmanager
-    command: --config.file=/etc/prometheus/alert_manager/alertmanager.yml
+      dockerfile: prometheus/alertmanager/dockerfile.alertmanager
+    command: --config.file=/etc/prometheus/alertmanager/alertmanager.yml
     ports:
       - 9093:9093
     networks: 
@@ -187,3 +187,4 @@ services:
 networks:
   backend_network:
     name: backend_network
+    
