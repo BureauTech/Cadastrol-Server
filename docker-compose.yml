@@ -7,6 +7,9 @@ services:
       dockerfile: dockerfile.postgres
     ports:
       - 5433:5432
+    volumes:
+      - "./postgres/postgresql.conf:/usr/local/etc/postgres/postgresql.conf"
+    command: "postgres -c config_file=/usr/local/etc/postgres/postgresql.conf"
     networks:
       - backend_network
     deploy:

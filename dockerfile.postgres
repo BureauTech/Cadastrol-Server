@@ -1,5 +1,4 @@
 FROM postgres:12
 ENV POSTGRES_PASSWORD postgres
 ENV POSTGRES_DB postgres
-COPY src/main/resources/ddl-database.sql /docker-entrypoint-initdb.d/
-COPY src/main/resources/postgresql.conf /var/lib/postgresql/data
+COPY postgres/ddl-database.sql /docker-entrypoint-initdb.d/
