@@ -2,13 +2,14 @@ version: '3.7'
 services:
   postgres:
     container_name: postgres
-    build: 
+    build:
       context: .
       dockerfile: dockerfile.postgres
     ports:
       - 5433:5432
     volumes:
       - "./postgres/postgresql.conf:/usr/local/etc/postgres/postgresql.conf"
+      - ~/data_containers/postgres:/var/lib/pgsql/data
     command: "postgres -c config_file=/usr/local/etc/postgres/postgresql.conf"
     networks:
       - backend_network
@@ -23,7 +24,7 @@ services:
 
   cadastrol-server:
     container_name: cadastrol-server
-    build: 
+    build:
       context: .
       dockerfile: dockerfile.java-maven
     ports:
@@ -43,11 +44,13 @@ services:
 
   nginx:
     container_name: nginx
-    build: 
+    build:
       context: .
       dockerfile: dockerfile.nginx
     ports:
       - 8000:8000
+    volumes:
+      - ~/data_containers/nginx:/tmp
     depends_on:
       - cadastrol-server
     networks:
@@ -66,6 +69,10 @@ services:
     image: prom/node-exporter
     ports:
       - 9100:9100
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
     networks:
       - backend_network
     deploy:
@@ -100,11 +107,13 @@ services:
 
   pg-exporter:
     container_name: pg-exporter
-    build: 
+    build:
       context: .
       dockerfile: dockerfile.pg-exporter
     ports:
       - 9630:9630
+    # volumes:
+    #   - ~/data_containers/pg-exporter:/
     depends_on:
       - postgres
     networks:
@@ -120,7 +129,7 @@ services:
 
   prometheus:
     container_name: prometheus
-    build: 
+    build:
       context: .
       dockerfile: dockerfile.prometheus
     command:
@@ -129,11 +138,14 @@ services:
       - '--web.enable-lifecycle'
     ports:
       - 9090:9090
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
     depends_on:
       - nginx
       - node-exporter
       - cadvisor
-      - pg-exporter  
+      - pg-exporter
     networks:
       - backend_network
     deploy:
@@ -147,11 +159,15 @@ services:
 
   grafana:
     container_name: grafana
-    build: 
+    build:
       context: .
       dockerfile: dockerfile.grafana
     ports:
       - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
     depends_on:
       - prometheus
     networks:
@@ -167,13 +183,15 @@ services:
 
   alertmanager:
     container_name: alertmanager
-    build: 
+    build:
       context: .
       dockerfile: dockerfile.alertmanager
     command: --config.file=/etc/prometheus/alert_manager/alertmanager.yml
     ports:
       - 9093:9093
-    networks: 
+    volumes:
+      - ./alertmanager:/etc/alertmanager
+    networks:
       - backend_network
     deploy:
       resources:
