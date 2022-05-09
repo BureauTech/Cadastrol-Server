@@ -112,8 +112,8 @@ services:
       dockerfile: dockerfile.pg-exporter
     ports:
       - 9630:9630
-    # volumes:
-    #   - ~/data_containers/pg-exporter:/
+    volumes:
+      - ~/data_containers/pg-exporter:/etc/pg-exporter
     depends_on:
       - postgres
     networks:
@@ -139,8 +139,7 @@ services:
     ports:
       - 9090:9090
     volumes:
-      - ./prometheus:/etc/prometheus
-      - prometheus_data:/prometheus
+      - ~/data_containers/prometheus:/etc/prometheus
     depends_on:
       - nginx
       - node-exporter
@@ -165,9 +164,9 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - grafana_data:/var/lib/grafana
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ~/data_containers/prometheus:/etc/grafana
     depends_on:
       - prometheus
     networks:
