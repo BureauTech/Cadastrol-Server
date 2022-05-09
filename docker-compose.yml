@@ -138,7 +138,7 @@ services:
     build:
       context: .
       dockerfile: prometheus/alertmanager/dockerfile.alertmanager
-    command: --config.file=/home/alertmanager.yml
+    command: --config.file=/etc/prometheus/alertmanager/alertmanager.yml
     ports:
       - 9093:9093
     networks:
