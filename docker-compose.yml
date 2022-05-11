@@ -10,7 +10,7 @@ services:
       - 5433:5432
     volumes:
       - "./postgres/postgresql.conf:/usr/local/etc/postgres/postgresql.conf"
-      - ~/data_containers/postgres:/var/lib/pgsql/data
+      - postgres_log:/var/lib/pgsql/data
     command: "postgres -c config_file=/usr/local/etc/postgres/postgresql.conf"
     networks:
       - backend_network
@@ -51,7 +51,7 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - ~/data_containers/nginx:/tmp
+      - nginx_log:/tmp
     depends_on:
       - cadastrol-server
     networks:
@@ -66,6 +66,7 @@ services:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
+      - node-exporter/:/etc/node-exporter
     networks:
       - backend_network
 
@@ -79,6 +80,7 @@ services:
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
+      - cadvisor_log/:/etc/cadvisor
     networks:
       - backend_network
 
@@ -90,7 +92,7 @@ services:
     ports:
       - 9630:9630
     volumes:
-      - ~/data_containers/pg-exporter:/etc/pg-exporter
+      - pg-exporter_log:/pg-exporter
     depends_on:
       - postgres
     networks:
@@ -108,7 +110,7 @@ services:
     ports:
       - 9090:9090
     volumes:
-      - ~/data_containers/prometheus:/etc/prometheus
+      - prometheus_log:/etc/prometheus
     depends_on:
       - nginx
       - node-exporter
@@ -127,7 +129,7 @@ services:
     volumes:
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-      - ~/data_containers/prometheus:/etc/grafana
+      - grafana_log:/etc/grafana
     depends_on:
       - prometheus
     networks:
@@ -141,9 +143,20 @@ services:
     command: --config.file=/etc/prometheus/alertmanager/alertmanager.yml
     ports:
       - 9093:9093
+    volumes:
+      - alertmanager_log:/etc/alertmanager
     networks:
       - backend_network
 
+volumes:
+  postgres_log:
+  nginx_log:
+  node-exporter:
+  cadvisor_log:
+  pg-exporter_log:
+  prometheus_log:
+  grafana_log:
+  alertmanager_log:
 networks:
   backend_network:
     name: backend_network
