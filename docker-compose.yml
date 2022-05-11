@@ -129,7 +129,7 @@ services:
     volumes:
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-      - grafana_log:/etc/grafana
+      - grafana_log:/usr/share/grafana
     depends_on:
       - prometheus
     networks:
