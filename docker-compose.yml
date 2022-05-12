@@ -66,7 +66,7 @@ services:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
-      - node-exporter/:/etc/node-exporter
+      - node-exporter/:/node-exporter
     networks:
       - backend_network
 
@@ -110,7 +110,7 @@ services:
     ports:
       - 9090:9090
     volumes:
-      - prometheus_log:/etc/prometheus
+      - prometheus_log:/prometheus
     depends_on:
       - nginx
       - node-exporter
