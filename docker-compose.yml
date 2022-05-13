@@ -85,7 +85,6 @@ services:
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
-      - cadvisor_log/:/etc/cadvisor
     networks:
       - backend_network
 
@@ -153,7 +152,7 @@ services:
     ports:
       - 9093:9093
     volumes:
-      - alertmanager_log:/etc/alertmanager
+      - alertmanager_log:/rootfs
     networks:
       - backend_network
 
