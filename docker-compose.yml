@@ -11,6 +11,7 @@ services:
       - 5433:5432
     volumes:
       - "./postgres/postgresql.conf:/usr/local/etc/postgres/postgresql.conf"
+      - postgres_log:/var/lib/pgsql/data
     command: "postgres -c config_file=/usr/local/etc/postgres/postgresql.conf"
     networks:
       - backend_network
@@ -52,6 +53,8 @@ services:
     restart: unless-stopped
     ports:
       - 8000:8000
+    volumes:
+      - nginx_log:/tmp
     depends_on:
       - cadastrol-server
     networks:
@@ -63,6 +66,11 @@ services:
     restart: unless-stopped
     ports:
       - 9100:9100
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - node-exporter/:/node-exporter
     networks:
       - backend_network
 
@@ -88,6 +96,8 @@ services:
       dockerfile: postgres/dockerfile.pg-exporter
     ports:
       - 9630:9630
+    volumes:
+      - pg-exporter_log:/pg-exporter
     depends_on:
       - postgres
     networks:
@@ -105,6 +115,8 @@ services:
     restart: unless-stopped
     ports:
       - 9090:9090
+    volumes:
+      - prometheus_log:/prometheus
     depends_on:
       - nginx
       - node-exporter
@@ -121,6 +133,10 @@ services:
     restart: unless-stopped
     ports:
       - 3000:3000
+    volumes:
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - grafana_log:/usr/share/grafana
     depends_on:
       - prometheus
     networks:
@@ -135,9 +151,20 @@ services:
     restart: unless-stopped
     ports:
       - 9093:9093
+    volumes:
+      - alertmanager_log:/rootfs
     networks:
       - backend_network
 
+volumes:
+  postgres_log:
+  nginx_log:
+  node-exporter:
+  cadvisor_log:
+  pg-exporter_log:
+  prometheus_log:
+  grafana_log:
+  alertmanager_log:
 networks:
   backend_network:
     name: backend_network
