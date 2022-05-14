@@ -10,9 +10,9 @@ services:
     ports:
       - 5433:5432
     volumes:
-      - "./postgres/postgresql.conf:/usr/local/etc/postgres/postgresql.conf"
+      - ./postgres/postgresql.conf:/usr/local/etc/postgres/postgresql.conf
       - postgres_log:/var/lib/pgsql/data
-    command: "postgres -c config_file=/usr/local/etc/postgres/postgresql.conf"
+    command: postgres -c config_file=/usr/local/etc/postgres/postgresql.conf
     networks:
       - backend_network
     deploy:
@@ -21,7 +21,6 @@ services:
           cpus: '0.25'
           memory: 128M
         reservations:
-          cpus: '0.10'
           memory: 64M
 
   cadastrol-server:
@@ -42,7 +41,6 @@ services:
           cpus: '0.50'
           memory: 256M
         reservations:
-          cpus: '0.10'
           memory: 128M
 
   nginx:
@@ -70,7 +68,7 @@ services:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
-      - node-exporter/:/node-exporter
+      - node-exporter:/node-exporter
     networks:
       - backend_network
 
@@ -165,6 +163,7 @@ volumes:
   prometheus_log:
   grafana_log:
   alertmanager_log:
+
 networks:
   backend_network:
     name: backend_network
