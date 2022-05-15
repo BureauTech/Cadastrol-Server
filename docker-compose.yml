@@ -1,37 +1,58 @@
 version: '3.7'
 services:
+
   postgres:
     container_name: postgres
-    restart: always
-    build: 
+    build:
       context: .
-      dockerfile: dockerfile.postgres
+      dockerfile: postgres/dockerfile.postgres
+    restart: unless-stopped
     ports:
       - 5433:5432
+    volumes:
+      - ./postgres/postgresql.conf:/usr/local/etc/postgres/postgresql.conf
+      - postgres_log:/var/lib/pgsql/data
+    command: postgres -c config_file=/usr/local/etc/postgres/postgresql.conf
     networks:
       - backend_network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          memory: 64M
 
   cadastrol-server:
     container_name: cadastrol-server
-    restart: always
-    build: 
+    build:
       context: .
-      dockerfile: dockerfile.java-maven
+      dockerfile: src/dockerfile.java-maven
+    restart: unless-stopped
     ports:
       - 8090:8090
     depends_on:
       - postgres
     networks:
       - backend_network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          memory: 128M
 
   nginx:
     container_name: nginx
-    restart: always
-    build: 
+    build:
       context: .
-      dockerfile: dockerfile.nginx
+      dockerfile: nginx/dockerfile.nginx
+    restart: unless-stopped
     ports:
       - 8000:8000
+    volumes:
+      - nginx_log:/tmp
     depends_on:
       - cadastrol-server
     networks:
@@ -39,17 +60,22 @@ services:
 
   node-exporter:
     container_name: node-exporter
-    restart: always
     image: prom/node-exporter
+    restart: unless-stopped
     ports:
       - 9100:9100
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - node-exporter:/node-exporter
     networks:
       - backend_network
 
   cadvisor:
     container_name: cadvisor
-    restart: always
     image: google/cadvisor:latest
+    restart: unless-stopped
     ports:
       - 8080:8080
     volumes:
@@ -62,12 +88,14 @@ services:
 
   pg-exporter:
     container_name: pg-exporter
-    restart: always
-    build: 
+    restart: unless-stopped
+    build:
       context: .
-      dockerfile: dockerfile.pg-exporter
+      dockerfile: postgres/dockerfile.pg-exporter
     ports:
       - 9630:9630
+    volumes:
+      - pg-exporter_log:/pg-exporter
     depends_on:
       - postgres
     networks:
@@ -75,38 +103,66 @@ services:
 
   prometheus:
     container_name: prometheus
-    restart: always
-    image: prom/prometheus
+    build:
+      context: .
+      dockerfile: prometheus/dockerfile.prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.enable-admin-api'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
     ports:
       - 9090:9090
+    volumes:
+      - prometheus_log:/prometheus
     depends_on:
       - nginx
       - node-exporter
       - cadvisor
       - pg-exporter
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./alert.rules.yml:/etc/prometheus/alert.rules.yml      
     networks:
       - backend_network
 
   grafana:
     container_name: grafana
-    restart: always
-    image: grafana/grafana
+    build:
+      context: .
+      dockerfile: grafana/dockerfile.grafana
+    restart: unless-stopped
     ports:
       - 3000:3000
+    volumes:
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - grafana_log:/usr/share/grafana
     depends_on:
       - prometheus
     networks:
       - backend_network
 
   alertmanager:
-    image: prom/alertmanager
+    container_name: alertmanager
+    build:
+      context: .
+      dockerfile: prometheus/alertmanager/dockerfile.alertmanager
+    command: --config.file=/home/alertmanager.yml
+    restart: unless-stopped
     ports:
       - 9093:9093
-    networks: 
+    volumes:
+      - alertmanager_log:/rootfs
+    networks:
       - backend_network
+
+volumes:
+  postgres_log:
+  nginx_log:
+  node-exporter:
+  cadvisor_log:
+  pg-exporter_log:
+  prometheus_log:
+  grafana_log:
+  alertmanager_log:
 
 networks:
   backend_network:

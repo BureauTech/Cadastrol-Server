@@ -24,7 +24,7 @@ then
     if [ $executeDDL -eq 1 ]
     then
         echo "configuring database"
-        PGPASSWORD=postgres psql postgres -h $PG_HOST -d postgres -f $ENV_PATH/ddl-database.sql
+        PGPASSWORD=postgres psql postgres -h $PG_HOST -d postgres -f postgres/ddl-database.sql
         echo -e "database successfully configured!\n"
     fi
 

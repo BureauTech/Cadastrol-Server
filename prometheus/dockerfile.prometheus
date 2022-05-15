@@ -1,0 +1,4 @@
+FROM prom/prometheus
+
+COPY prometheus/prometheus.yml /etc/prometheus/prometheus.yml
+COPY prometheus/alert.rules.yml /etc/prometheus/alert.rules.yml
